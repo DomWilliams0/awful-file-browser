@@ -12,3 +12,4 @@ name = "awful-file-browser"
 path = "src/main.rs"
 
 [dependencies]
+clap = "*"
