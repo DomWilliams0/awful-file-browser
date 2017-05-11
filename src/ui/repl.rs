@@ -19,6 +19,11 @@ static HANDLERS: &'static [(&'static str, Command)] = &[("quit",
                                                              needs_arg: false,
                                                              handler: Repl::handler_list,
                                                          }),
+                                                        ("pwd",
+                                                         Command {
+                                                             needs_arg: false,
+                                                             handler: Repl::handler_pwd,
+                                                         }),
                                                         ("cd",
                                                          Command {
                                                              needs_arg: true,
@@ -97,6 +102,11 @@ impl Repl {
 
     fn handler_cd(&mut self, arg: Option<&str>) -> Result<(), AwfulError> {
         self.fb.cd(arg.unwrap())?;
+        Ok(())
+    }
+
+    fn handler_pwd(&mut self, _: Option<&str>) -> Result<(), AwfulError> {
+        println!("Current directory: {:?}", self.fb.path());
         Ok(())
     }
 }
