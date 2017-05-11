@@ -18,7 +18,7 @@ trait UI {
 pub fn start(ui_type: UIType, fb: FileBrowser) -> Result<(), AwfulError> {
     match ui_type {
         UIType::Repl => UI::start(<repl::Repl>::new(fb)),
-        _ => Err(AwfulError::NotImplemented)
+        _ => Err(AwfulError::NotImplemented),
 
     }
 }
