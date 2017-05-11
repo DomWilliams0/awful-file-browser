@@ -1,4 +1,4 @@
 [root]
-name = "file-browser"
+name = "awful-file-browser"
 version = "0.1.0"
 

@@ -1,5 +1,5 @@
 [package]
-name = "file-browser"
+name = "awful-file-browser"
 version = "0.1.0"
 authors = ["Dom Williams <me@domwillia.ms>"]
 
