@@ -1,6 +1,5 @@
 use super::UI;
-use std::error;
-use awful_files::FileBrowser;
+use awful_files::{FileBrowser, AwfulError};
 
 pub struct Repl {
     fb: FileBrowser,
@@ -13,7 +12,7 @@ impl Repl {
 }
 
 impl UI for Repl {
-    fn start(self) -> Result<(), Box<error::Error>> {
+    fn start(self) -> Result<(), AwfulError> {
         Ok(())
     }
 }

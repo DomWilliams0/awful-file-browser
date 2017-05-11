@@ -2,8 +2,7 @@ extern crate awful_files;
 extern crate clap;
 mod ui;
 
-use awful_files::FileBrowser;
-use std::error::Error;
+use awful_files::{FileBrowser, AwfulError};
 use clap::{Arg, App};
 
 struct Config {
@@ -23,7 +22,7 @@ fn main() {
     }
 }
 
-fn parse_args() -> Result<Config, Box<Error>> {
+fn parse_args() -> Result<Config, AwfulError> {
     let matches = App::new("awful-file-browser")
         .version("1.0")
         .author("Dom Williams <me@domwillia.ms>")
@@ -44,7 +43,7 @@ fn parse_args() -> Result<Config, Box<Error>> {
     let cmd = matches.is_present("cmd");
     let gui = matches.is_present("gui");
     let ui = match (cmd, gui) {
-        (true, true) => return Err(From::from("-c and -g cannot both be specified")),
+        (true, true) => return Err(AwfulError::Args("-c and -g cannot both be specified")),
         (_, false) => ui::UIType::Repl,
         (_, true) => ui::UIType::Graphical,
     };
@@ -55,7 +54,7 @@ fn parse_args() -> Result<Config, Box<Error>> {
        })
 }
 
-fn run(conf: Config) -> Result<(), Box<Error>> {
+fn run(conf: Config) -> Result<(), AwfulError> {
     let fb = FileBrowser::new(conf.path.as_str());
 
     ui::start(conf.ui, fb)

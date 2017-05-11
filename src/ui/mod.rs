@@ -3,8 +3,7 @@
 mod repl;
 mod gui;
 
-use std::error;
-use awful_files::FileBrowser;
+use awful_files::{FileBrowser, AwfulError};
 
 pub enum UIType {
     Repl,
@@ -12,14 +11,14 @@ pub enum UIType {
 }
 
 trait UI {
-    fn start(self) -> Result<(), Box<error::Error>>;
+    fn start(self) -> Result<(), AwfulError>;
 }
 
 
-pub fn start(ui_type: UIType, fb: FileBrowser) -> Result<(), Box<error::Error>> {
+pub fn start(ui_type: UIType, fb: FileBrowser) -> Result<(), AwfulError> {
     match ui_type {
         UIType::Repl => UI::start(<repl::Repl>::new(fb)),
-        _ => Ok(()), // TODO not implemented error
+        _ => Err(AwfulError::NotImplemented)
 
     }
 }
