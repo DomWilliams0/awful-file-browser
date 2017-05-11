@@ -3,4 +3,13 @@ name = "awful-file-browser"
 version = "0.1.0"
 authors = ["Dom Williams <me@domwillia.ms>"]
 
+[lib]
+name = "awful_files"
+path = "src/lib.rs"
+
+[[bin]]
+name = "awful-file-browser"
+path = "src/main.rs"
+
 [dependencies]
+clap = "*"
