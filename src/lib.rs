@@ -1,7 +1,7 @@
-  use std::path::PathBuf;
-  use std::io;
-  use std::ffi;
-  use std::fs;
+use std::path::PathBuf;
+use std::io;
+use std::ffi;
+use std::fs;
 
 
 pub struct FileBrowser {
@@ -17,7 +17,7 @@ pub struct File {
 impl File {
     pub fn new(e: Option<fs::DirEntry>) -> Option<File> {
         if e.is_none() {
-          return None
+            return None;
         }
 
         let e = e.unwrap();
@@ -36,9 +36,7 @@ impl File {
 
 impl FileBrowser {
     pub fn new(path: &str) -> FileBrowser {
-      FileBrowser {
-        cur_path: PathBuf::from(path)
-      }
+        FileBrowser { cur_path: PathBuf::from(path) }
     }
     pub fn cd(&mut self, rel_path: &str) {
         if rel_path == ".." {
@@ -50,9 +48,8 @@ impl FileBrowser {
 
     pub fn list_files(&self) -> io::Result<Vec<File>> {
         let it = fs::read_dir(&self.cur_path)?;
-        Ok(it
-          .filter(|e| e.is_ok())
-          .filter_map(|e| File::new(e.ok()))
-          .collect())
+        Ok(it.filter(|e| e.is_ok())
+               .filter_map(|e| File::new(e.ok()))
+               .collect())
     }
 }
