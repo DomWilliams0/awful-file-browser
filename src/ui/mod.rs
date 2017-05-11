@@ -11,14 +11,15 @@ pub enum UIType {
 }
 
 trait UI {
-    fn start(self) -> Result<(), AwfulError>;
+    fn start(&mut self) -> Result<(), AwfulError>;
 }
 
 
 pub fn start(ui_type: UIType, fb: FileBrowser) -> Result<(), AwfulError> {
-    match ui_type {
-        UIType::Repl => UI::start(<repl::Repl>::new(fb)),
-        _ => Err(AwfulError::NotImplemented),
+    let mut ui = match ui_type {
+        UIType::Repl => repl::Repl::new(fb),
+        _ => return Err(AwfulError::NotImplemented),
+    };
 
-    }
+    ui.start()
 }
