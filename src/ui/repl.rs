@@ -1,5 +1,4 @@
 use std::cmp;
-use std::fs;
 use std::io::{stdin, BufRead};
 use super::UI;
 use awful_files::{FileBrowser, AwfulError};
@@ -82,7 +81,7 @@ impl Repl {
         let max_len = cmp::max(10, files.iter().map(|x| x.name().len()).max().unwrap_or(0));
 
 
-        println!("Listing {:?}", fs::canonicalize(self.fb.path()).unwrap());
+        println!("Listing {:?}", self.fb.path().canonicalize().unwrap());
         for _ in 0..max_len {
             print!("-");
         }
@@ -106,7 +105,8 @@ impl Repl {
     }
 
     fn handler_pwd(&mut self, _: Option<&str>) -> Result<(), AwfulError> {
-        println!("Current directory: {:?}", self.fb.path());
+        println!("Current directory: {:?}",
+                 self.fb.path().canonicalize().unwrap());
         Ok(())
     }
 }
