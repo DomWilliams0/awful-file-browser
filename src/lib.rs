@@ -1,5 +1,4 @@
 use std::path::PathBuf;
-use std::io;
 use std::ffi;
 use std::fmt;
 use std::fs;
@@ -74,16 +73,20 @@ impl FileBrowser {
     pub fn new(path: &str) -> FileBrowser {
         FileBrowser { cur_path: PathBuf::from(path) }
     }
-    pub fn cd(&mut self, rel_path: &str) -> Result<(), AwfulError> {
-        if rel_path == ".." {
-            self.cur_path.pop();
-        } else {
-            self.cur_path.push(rel_path)
-        }
 
-        if !self.cur_path.exists() {
-            Err(AwfulError::Args("Directory does not exist"))
+    pub fn cd(&mut self, rel_path: &str) -> Result<(), AwfulError> {
+        let new_path: Option<PathBuf> = if rel_path == ".." {
+            self.cur_path.parent().map(|p| p.to_path_buf())
         } else {
+            Some(self.cur_path.join(rel_path))
+        };
+
+        if new_path.is_none() || !new_path.as_ref().unwrap().exists() {
+            return Err(AwfulError::Args("Directory does not exist"));
+        } else {
+
+
+            self.cur_path = new_path.unwrap();
             Ok(())
         }
     }
