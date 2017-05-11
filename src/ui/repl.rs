@@ -116,10 +116,6 @@ impl UI for Repl {
 
         let stdin = stdin();
         for line in stdin.lock().lines() {
-            if !self.active {
-                break;
-            }
-
             let line = line.unwrap();
             let mut split = line.splitn(2, ' ');
             if let Some(cmd) = split.next() {
@@ -128,6 +124,12 @@ impl UI for Repl {
                 if let Err(err) = self.handle_command(cmd, args) {
                     println!("{}", err);
                 }
+
+                // quit if necessary
+                if !self.active {
+                    break;
+                }
+
                 continue;
             }
 
