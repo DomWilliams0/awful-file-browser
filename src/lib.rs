@@ -6,36 +6,36 @@ use std::fs;
 
 #[derive(Debug)]
 pub enum AwfulError {
-  Args(&'static str),
-  NotImplemented,
-  Io(std::io::Error)
+    Args(&'static str),
+    NotImplemented,
+    Io(std::io::Error),
 }
 
 impl std::error::Error for AwfulError {
-  fn description(&self) -> &str {
-    match *self {
-      AwfulError::Args(_) => "Usage error",
-      AwfulError::NotImplemented => "Not implemented",
-      AwfulError::Io(ref err) => err.description()
+    fn description(&self) -> &str {
+        match *self {
+            AwfulError::Args(_) => "Usage error",
+            AwfulError::NotImplemented => "Not implemented",
+            AwfulError::Io(ref err) => err.description(),
+        }
     }
-  }
 
     fn cause(&self) -> Option<&std::error::Error> {
-      match *self {
-        AwfulError::Io(ref err) => err.cause(),
-        _ => None
-      }
+        match *self {
+            AwfulError::Io(ref err) => err.cause(),
+            _ => None,
+        }
     }
 }
 
 impl fmt::Display for AwfulError {
-  fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-    match *self {
-      AwfulError::Args(ref msg) => write!(f, "{}", msg),
-      AwfulError::NotImplemented => write!(f, "Not implemented"),
-      AwfulError::Io(ref err) => err.fmt(f)
+    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+        match *self {
+            AwfulError::Args(ref msg) => write!(f, "{}", msg),
+            AwfulError::NotImplemented => write!(f, "Not implemented"),
+            AwfulError::Io(ref err) => err.fmt(f),
+        }
     }
-  }
 }
 
 pub struct FileBrowser {
@@ -44,8 +44,8 @@ pub struct FileBrowser {
 
 #[derive(Debug)]
 pub struct File {
-    pub name: ffi::OsString,
-    pub file_type: fs::FileType,
+    name: ffi::OsString,
+    file_type: fs::FileType,
 }
 
 impl File {
@@ -65,6 +65,14 @@ impl File {
                      })
             }
         }
+    }
+
+    pub fn name(&self) -> &ffi::OsStr {
+        &self.name
+    }
+
+    pub fn file_type(&self) -> fs::FileType {
+        self.file_type
     }
 }
 
@@ -86,4 +94,9 @@ impl FileBrowser {
                .filter_map(|e| File::new(e.ok()))
                .collect())
     }
+
+    pub fn path(&self) -> &PathBuf {
+        &self.cur_path
+    }
+
 }

@@ -1,14 +1,18 @@
+use std::cmp;
+use std::fs;
 use std::io::{stdin, BufRead};
 use super::UI;
 use awful_files::{FileBrowser, AwfulError};
 
 struct Command {
   pub needs_arg: bool,
-  pub handler: fn(&mut Repl, Option<&str>)
+  pub handler: fn(&mut Repl, Option<&str>) -> Result<(), AwfulError>
 }
 
   static HANDLERS: &'static [(&'static str, Command)] = &[
-    ("test", Command {needs_arg: false, handler: Repl::handler_test}),
+    ("quit", Command {needs_arg: false, handler: Repl::handler_quit}),
+    ("ls", Command {needs_arg: false, handler: Repl::handler_list}),
+    ("cd", Command {needs_arg: true, handler: Repl::handler_cd}),
     ];
 
 
@@ -45,20 +49,57 @@ impl Repl {
             _ => ()
           }
 
-          (cmd.handler)(self, args);
+          (cmd.handler)(self, args)?;
           Ok(())
         }
       }
     }
 
-    fn handler_test(&mut self, _: Option<&str>) {
-      println!("Testing!");
+    fn handler_quit(&mut self, _: Option<&str>) -> Result<(), AwfulError> {
+      self.active = false;
+      Ok(())
     }
 
-}
+    fn handler_list(&mut self, _: Option<&str>) -> Result<(), AwfulError> {
+      let mut files = match self.fb.list_files() {
+        Err(e) => return Err(AwfulError::Io(e)),
+        Ok(files) => files
+      };
 
-impl UI for Repl {
-    fn start(&mut self) -> Result<(), AwfulError> {
+      let max_len = cmp::max(10, files.iter()
+      .map(|x| x.name().len())
+      .max()
+      .unwrap_or(0));
+
+
+      println!("Listing {:?}", fs::canonicalize(self.fb.path()).unwrap());
+      for _ in 0..max_len {
+        print!("-");
+      }
+      println!();
+
+      // sort dirs first
+      files.sort_by_key(|x| x.file_type().is_dir());
+
+      for file in files.iter() {
+        println!("{} {:?}",
+          if file.file_type().is_dir() {"+"} else {"-"},
+          file.name());
+      }
+
+      Ok(())
+    }
+
+    fn handler_cd(&mut self, arg: Option<&str>) -> Result<(), AwfulError> {
+      // TODO return error
+      self.fb.cd(arg.unwrap());
+      Ok(())
+    }
+
+  }
+
+    impl UI for Repl {
+      fn start(&mut self) -> Result<(), AwfulError> {
 
         let stdin = stdin();
         for line in stdin.lock().lines() {
